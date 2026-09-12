@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"cryps/packages"
+	"cryps/cypher"
 )
 
 func main() {
@@ -26,9 +26,9 @@ func main() {
 	var response []string
 
 	if c == 1 {
-		response = packages.Encrypt(content)
+		response = cypher.Encrypt(content)
 	} else {
-		response = packages.Decrypt(content)
+		response = cypher.Decrypt(content)
 	}
 
 	f, err := os.Create("response.txt")

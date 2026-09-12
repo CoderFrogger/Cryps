@@ -1,4 +1,4 @@
-package packages
+package cypher
 
 var alpha = []string{
 	" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
