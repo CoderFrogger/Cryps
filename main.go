@@ -27,9 +27,9 @@ func main() {
 	var response []string
 
 	if c == 1 {
-		response = things.Encrypt(content)
+		response = packages.Encrypt(content)
 	} else {
-		response = things.Decrypt(content)
+		response = packages.Decrypt(content)
 	}
 
 	f, err := os.Create("response.txt")
