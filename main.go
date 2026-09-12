@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Bill_Cypher/things"
+	"cryps/packages"
 	"fmt"
 	"io/ioutil"
 	"log"
