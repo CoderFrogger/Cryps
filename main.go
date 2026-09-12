@@ -1,12 +1,12 @@
 package main
 
 import (
-	"cryps/packages"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	"cryps/packages"
 )
 
 func main() {
@@ -19,8 +19,7 @@ func main() {
 	var d string
 	fmt.Scanln(&d)
 
-	content, err := ioutil.ReadFile(d)
-
+	content, err := os.ReadFile(d)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +32,6 @@ func main() {
 	}
 
 	f, err := os.Create("response.txt")
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,7 +40,6 @@ func main() {
 
 	key := strings.Join(response, "")
 	_, err = f.WriteString(key)
-
 	if err != nil {
 		log.Fatal(err)
 	}
