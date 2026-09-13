@@ -1,6 +1,12 @@
 package cypher
 
 import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +26,7 @@ var rootCmd = &cobra.Command{
 	  		cryps [flags] <text>
 
 			Encrypts the given text using the key file passed via -l/--library
-			and prints the result to stdout.
+			and prints the textInput to stdout.
 
 			Flags:
 			  -h, --help              Show this help message
@@ -70,5 +76,22 @@ func runCryps(cmd *cobra.Command, args []string) {
 			"Library json filed not provided. Please define encryption library using the -l or --library flag",
 		)
 		return
+	} // TODO: ADD LIBRARY STUFF
+
+	var textInput []byte
+
+	if file == "" {
+		textInput = []byte(text)
+	} else {
+		input, err := os.ReadFile(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		textInput = input
 	}
+
+	result := Encrypt(textInput)
+
+	fmt.Println(result)
+	return
 }
