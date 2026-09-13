@@ -1,46 +1,97 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"cryps/cypher"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	fmt.Println("1: Input text, get cypher\n2: Input cypher get text")
+var (
+	library string
+	file    string
+	output  string
+	decrypt bool
+)
 
-	var c int
-	fmt.Scanln(&c)
+var rootCmd = &cobra.Command{
+	Use:   "cryps -l <path_to_library>",
+	Short: "Use a defined library to encrypt your text",
+	Long: `A CLI program that takes a user defined encryption library json file and encrypts text using said library
 
-	fmt.Println("Input file name(with .txt at the end): ")
-	var d string
-	fmt.Scanln(&d)
+			Usage:
+	  		cryps [flags] <text>
 
-	content, err := os.ReadFile(d)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var response []string
+			Encrypts the given text using the key file passed via -l/--library
+			and prints the textInput to stdout.
 
-	if c == 1 {
-		response = cypher.Encrypt(content)
+			Flags:
+			  -h, --help              Show this help message
+			  -f, --file <path>       Read input from a file instead of the command line
+			  -o, --output <path>     Write output to this file instead of printing to
+                           the terminal (only used with -f)
+			  -l, --library <path>    (required) Path to the encryption key/library JSON file
+			  -d, --decrypt           Decrypt instead of encrypt
+
+			Examples:
+			  cryps -l key.json "hello there"
+			  cryps -l key.json -f message.txt
+			  cryps -l key.json -f message.txt -o out.txt
+			  cryps -l key.json -d -f response.txt`,
+	Args: cobra.ArbitraryArgs,
+	Run:  runCryps,
+}
+
+func init() {
+	rootCmd.Flags().StringVar(&library, "", "l", "")
+	rootCmd.Flags().StringVar(&file, "", "f", "")
+	rootCmd.Flags().StringVar(&output, "", "o", "")
+	rootCmd.Flags().BoolVarP(&decrypt, "", "d", false, "")
+}
+
+func runCryps(cmd *cobra.Command, args []string) {
+	var text string
+
+	if len(args) > 0 {
+		text = strings.Join(args, " ")
 	} else {
-		response = cypher.Decrypt(content)
+		scanner := bufio.NewScanner(os.Stdin)
+		var lines []string
+		for scanner.Scan() {
+			lines = append(lines, scanner.Text())
+		}
+		text = strings.Join(lines, "\n")
 	}
 
-	f, err := os.Create("response.txt")
-	if err != nil {
-		log.Fatal(err)
+	if text == "" {
+		fmt.Println("No input text provided")
+		return
 	}
 
-	defer f.Close()
+	if library == "" {
+		fmt.Println(
+			"Library json filed not provided. Please define encryption library using the -l or --library flag",
+		)
+		return
+	} // TODO: ADD LIBRARY STUFF
 
-	key := strings.Join(response, "")
-	_, err = f.WriteString(key)
-	if err != nil {
-		log.Fatal(err)
+	var textInput []byte
+
+	if file == "" {
+		textInput = []byte(text)
+	} else {
+		input, err := os.ReadFile(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		textInput = input
 	}
+
+	result := Encrypt(textInput)
+
+	fmt.Println(result)
+	return
 }
