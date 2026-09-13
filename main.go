@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+
+	"cryps/cypher"
 )
 
 var (
@@ -90,7 +92,7 @@ func runCryps(cmd *cobra.Command, args []string) {
 		textInput = input
 	}
 
-	result := Encrypt(textInput)
+	result := cypher.Encrypt(textInput)
 
 	fmt.Println(result)
 	return
