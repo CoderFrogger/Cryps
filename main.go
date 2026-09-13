@@ -43,7 +43,7 @@ func init() {
 	rootCmd.Flags().
 		StringVarP(&output, "output", "o", "", "Write output to this file instead of printing to the terminal (only used with -f)")
 	rootCmd.Flags().
-		BoolVarP(&decrypt, "d", "", false, "Decrypt instead of encrypt")
+		BoolVarP(&decrypt, "decrypt", "d", false, "Decrypt instead of encrypt")
 }
 
 func runCryps(cmd *cobra.Command, args []string) {
