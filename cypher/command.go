@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	library bool
-	file    bool
-	output  bool
+	library string
+	file    string
+	output  string
 	decrypt bool
 )
 
@@ -35,11 +35,40 @@ var rootCmd = &cobra.Command{
 			  cryps -l key.json -f message.txt
 			  cryps -l key.json -f message.txt -o out.txt
 			  cryps -l key.json -d -f response.txt`,
+	Args: cobra.ArbitraryArgs,
+	Run:  runCryps,
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&library, "", "l", false, "")
-	rootCmd.Flags().BoolVarP(&file, "", "f", false, "")
-	rootCmd.Flags().BoolVarP(&output, "", "o", false, "")
+	rootCmd.Flags().StringVar(&library, "", "l", "")
+	rootCmd.Flags().StringVar(&file, "", "f", "")
+	rootCmd.Flags().StringVar(&output, "", "o", "")
 	rootCmd.Flags().BoolVarP(&decrypt, "", "d", false, "")
+}
+
+func runCryps(cmd *cobra.Command, args []string) {
+	var text string
+
+	if len(args) > 0 {
+		text = strings.Join(args, " ")
+	} else {
+		scanner := bufio.NewScanner(os.Stdin)
+		var lines []string
+		for scanner.Scan() {
+			lines = append(lines, scanner.Text())
+		}
+		text = strings.Join(lines, "\n")
+	}
+
+	if text == "" {
+		fmt.Println("No input text provided")
+		return
+	}
+
+	if library == "" {
+		fmt.Println(
+			"Library json filed not provided. Please define encryption library using the -l or --library flag",
+		)
+		return
+	}
 }
