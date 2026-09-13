@@ -48,10 +48,14 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&library, "", "l", "")
-	rootCmd.Flags().StringVar(&file, "", "f", "")
-	rootCmd.Flags().StringVar(&output, "", "o", "")
-	rootCmd.Flags().BoolVarP(&decrypt, "", "d", false, "")
+	rootCmd.Flags().
+		StringVarP(&library, "library", "l", "", "(required) Path to the encryption key/library JSON file")
+	rootCmd.Flags().
+		StringVarP(&file, "file", "f", "", "Read input from a file instead of the command line")
+	rootCmd.Flags().
+		StringVarP(&output, "output", "o", "", "Write output to this file instead of printing to the terminal (only used with -f)")
+	rootCmd.Flags().
+		BoolVarP(&decrypt, "d", "", false, "Decrypt instead of encrypt")
 }
 
 func runCryps(cmd *cobra.Command, args []string) {
@@ -88,6 +92,7 @@ func runCryps(cmd *cobra.Command, args []string) {
 		input, err := os.ReadFile(file)
 		if err != nil {
 			log.Fatal(err)
+			os.Exit(1)
 		}
 		textInput = input
 	}
@@ -95,5 +100,11 @@ func runCryps(cmd *cobra.Command, args []string) {
 	result := cypher.Encrypt(textInput)
 
 	fmt.Println(result)
-	return
+}
+
+func main() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 }
